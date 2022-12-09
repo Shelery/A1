@@ -61,16 +61,16 @@ function loop() {
 function setup() {
   // Create a div for flame+light when screen touched
   document.addEventListener("pointerdown", (e) => {
-    createElement("flame", e);
+    createElement("flame", e, 2.5);
 
-    createElement("light", e);
+    createElement("light", e, 4);
   });
 
   // Make the flame+light follow the pointer when it moves
   document.addEventListener("pointermove", (e) => {
-    followPointer("flame", e);
+    followPointer("flame", e, 2.5);
 
-    followPointer("light", e);
+    followPointer("light", e, 4);
   });
   // remove the flame+light when finger lifted
   document.addEventListener("pointerup", (e) => {
@@ -89,22 +89,22 @@ function setup() {
     flame.style.top = `${event.pageY}px`;
   }
 
-  function createElement(type, event) {
+  function createElement(type, event, ratio) {
     if (type === "flame" || type === "light") {
       const element = document.createElement("div");
       element.classList.add(`${type}`);
       element.id = `${type}${event.pointerId}`;
-      updateSizeAndPos(event, element, 2.5);
+      updateSizeAndPos(event, element, ratio);
       document.body.append(element);
     }
   }
 
-  function followPointer(type, event) {
+  function followPointer(type, event, ratio) {
     if (type === "flame" || type === "light") {
       // find the HTML element that is the "object" of the current event
       const element = document.getElementById(`${type}${event.pointerId}`);
       if (element == null) return;
-      updateSizeAndPos(event, element, 2.5);
+      updateSizeAndPos(event, element, ratio);
     }
   }
 
