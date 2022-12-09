@@ -59,11 +59,21 @@ function loop() {
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
+  let audio = new Audio("./assigment_1-template/wind-chimes-sound.mp3");
+
+  audio.volume = 0;
+  audio.autoplay = true;
   // Create a div for flame+light when screen touched
   document.addEventListener("pointerdown", (e) => {
     createElement("flame", e, 2.5);
 
     createElement("light", e, 4);
+
+    if (audio.volume < 1) {
+      audio.volume += 0.2;
+    }
+
+    console.log(audio.volume);
   });
 
   // Make the flame+light follow the pointer when it moves
@@ -77,6 +87,10 @@ function setup() {
     removeElement("flame", e.pointerId);
 
     removeElement("light", e.pointerId);
+    if (audio.volume > .1) {
+      audio.volume -= 0.2;
+    }
+    console.log(audio.volume);
   });
 
   // Create size and position of flame
