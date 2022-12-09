@@ -2,15 +2,15 @@
  * Assignment 1: Paired Modelling
  * ------------------------------
  * Programming 2022, Interaction Design Bacherlor, Malmö University
- * 
+ *
  * This assignment is written by:
- * Name Surname
- * Name Surname
- * 
- * 
+ * Anastasiia Kniazkina
+ * Eszter Kovács
+ *
+ *
  * The template contains some sample code exemplifying the template code structure.
  * You can build on top of it, or remove the example values etc.
- * 
+ *
  * For instructions, see the Canvas assignment: https://mau.instructure.com/courses/11936/assignments/84965
  * For guidence on how to use the template, see the demo video:
  *
@@ -18,53 +18,24 @@
 
 // The state should contain all the "moving" parts of your program, values that change.
 let state = Object.freeze({
-    pointerEvent: { x: 0, y: 0 },
+  pointerEvent: { x: 0, y: 0 },
 });
-
 
 // The settings should contain all of the "fixed" parts of your programs, like static HTMLElements and paramaters.
 const settings = Object.freeze({
-    sample: {
+  /*     sample: {
         height: 100,
         width: 100,
         element: document.querySelector("#sample-output"),
-    },
+    }, */
 });
-
 
 /**
  * Update the state object with the properties included in `newState`.
  * @param {Object} newState An object with the properties to update in the state object.
  */
 function updateState(newState) {
-    state = Object.freeze({ ...state, ...newState });
-}
-
-
-/**
- * Return `num` normalized to 0..1 in range min..max.
- * @param {number} num
- * @param {number} min 
- * @param {number} max 
- * @returns number
- */
-function scale(num, min, max) {
-    if (num < min) return 0;
-    if (num > max) return 1;
-    return (num - min) / (max - min);
-}
-
-/**
- * Return `num` transformed from the normalised 0..1 form back to the min..max form.
- * @param {number} num
- * @param {number} min 
- * @param {number} max 
- * @returns number
- */
-function toAbsolute(num, min, max) {
-    if (num < 0) return min;
-    if (num > 1) return max;
-    return (num * (max - min)) + min;
+  state = Object.freeze({ ...state, ...newState });
 }
 
 /**
@@ -72,39 +43,82 @@ function toAbsolute(num, min, max) {
  * loop() is run every frame, assuming that we keep calling it with `window.requestAnimationFrame`.
  */
 function loop() {
-    const { pointerEvent } = state;
-    const { sample } = settings;
-
-    const mirroredPoint = {
-        x: 1 - scale(pointerEvent.x, 0, window.innerWidth),
-        y: 1 - scale(pointerEvent.y, 0, window.innerHeight),
+  // Make the light "breathe"
+  // slow the animation down
+  setTimeout(() => {
+    let lights = document.querySelectorAll(".light");
+    for (let light of lights) {
+      light.style.background = `radial-gradient(gold, transparent 50%)`;
+      light.style.opacity = `${Math.random()}`;
     }
-
-    const absolutePoint = {
-        x: toAbsolute(mirroredPoint.x, 0, window.innerWidth) - (sample.width / 2),
-        y: toAbsolute(mirroredPoint.y, 0, window.innerHeight) - (sample.height / 2),
-    }
-
-    sample.element.style.transform = `translate(${absolutePoint.x}px, ${absolutePoint.y}px)`;
-
     window.requestAnimationFrame(loop);
+  }, 80);
 }
-
 
 /**
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
-    const { sample } = settings;
-    sample.element.style.height = `${sample.height}px`;
-    sample.element.style.width = `${sample.width}px`;
+  // Create a div for flame+light when screen touched
+  document.addEventListener("pointerdown", (e) => {
+    createElement("flame", e);
 
-    document.addEventListener("pointermove", function (event) {
-        updateState({ pointerEvent: event });
-    });
+    createElement("light", e);
+  });
 
-    loop();
+  // Make the flame+light follow the pointer when it moves
+  document.addEventListener("pointermove", (e) => {
+    followPointer("flame", e);
+
+    followPointer("light", e);
+  });
+  // remove the flame+light when finger lifted
+  document.addEventListener("pointerup", (e) => {
+    removeElement("flame", e.pointerId);
+
+    removeElement("light", e.pointerId);
+  });
+
+  // Create size and position of flame
+  function updateSizeAndPos(event, flame, ratio) {
+    // set width of flame light
+    flame.style.width = `${event.width * ratio}px`;
+    flame.style.height = `${event.height * ratio}px`;
+    // set postion of flame
+    flame.style.left = `${event.pageX}px`;
+    flame.style.top = `${event.pageY}px`;
+  }
+
+  function createElement(type, event) {
+    if (type === "flame" || type === "light") {
+      const element = document.createElement("div");
+      element.classList.add(`${type}`);
+      element.id = `${type}${event.pointerId}`;
+      updateSizeAndPos(event, element, 2.5);
+      document.body.append(element);
+    }
+  }
+
+  function followPointer(type, event) {
+    if (type === "flame" || type === "light") {
+      // find the HTML element that is the "object" of the current event
+      const element = document.getElementById(`${type}${event.pointerId}`);
+      if (element == null) return;
+      updateSizeAndPos(event, element, 2.5);
+    }
+  }
+
+  function removeElement(type, pointerId) {
+    if (type === "flame" || type === "light") {
+      // find the HTML element that is the "object" of the current event:
+      const element = document.getElementById(`${type}${pointerId}`);
+      if (element == null) return;
+      element.remove();
+    }
+  }
+  loop();
 }
 
-
 setup(); // Always remember to call setup()!
+
+// Possible improvements : make ratio randomized
