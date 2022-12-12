@@ -59,7 +59,7 @@ function loop() {
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
-  let audio = new Audio("./assigment_1-template/wind-chimes-sound.mp3");
+  let audio = new Audio("./wind-chimes-sound.mp3");
 
   audio.volume = 0;
   audio.autoplay = true;
@@ -68,12 +68,12 @@ function setup() {
     createElement("flame", e, 2.5);
 
     createElement("light", e, 4);
-
-    if (audio.volume < 1) {
-      audio.volume += 0.2;
+    if (audio.paused) {
+      audio.play();
     }
-
-    console.log(audio.volume);
+    if (audio.volume < 1) {
+      audio.volume = Math.floor((audio.volume + 0.2) * 10) / 10;
+    }
   });
 
   // Make the flame+light follow the pointer when it moves
@@ -87,8 +87,8 @@ function setup() {
     removeElement("flame", e.pointerId);
 
     removeElement("light", e.pointerId);
-    if (audio.volume > .1) {
-      audio.volume -= 0.2;
+    if (audio.volume > 0.1) {
+      audio.volume = Math.floor((audio.volume - 0.2) * 10) / 10;
     }
     console.log(audio.volume);
   });
@@ -136,3 +136,5 @@ function setup() {
 setup(); // Always remember to call setup()!
 
 // Possible improvements : make ratio randomized
+//                         before the first pointerup event it won't start playing the sound effect
+//                              ->store audioState in localStorage and set it playing at refresh
