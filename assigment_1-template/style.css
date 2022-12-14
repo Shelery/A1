@@ -21,8 +21,8 @@ body {
 }
 
 .flame {
-  min-height: 2rem;
-  min-width: 2rem;
+  min-height: 100px;
+  min-width: 100px;
   background: radial-gradient(white 10%, gold 15%, transparent 50%);
   border-radius: 100px;
   position: absolute;
@@ -30,8 +30,8 @@ body {
 }
 
 .light {
-  min-height: 4rem;
-  min-width: 4rem;
+  min-height: 200px;
+  min-width: 200px;
   background: radial-gradient(gold, transparent 50%);
   border-radius: 100px;
   position: absolute;
