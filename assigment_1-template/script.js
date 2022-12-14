@@ -37,11 +37,7 @@ function loop() {
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
-<<<<<<< HEAD
   let audio = new Audio("wind-chimes-sound.mp3");
-=======
-  let audio = new Audio("./wind-chimes-sound.mp3");
->>>>>>> accf8e88ca6fdc613220bfc5e6ff9e2e0d369301
 
   audio.volume = 0;
   audio.autoplay = true;
