@@ -16,28 +16,6 @@
  *
  */
 
-// The state should contain all the "moving" parts of your program, values that change.
-let state = Object.freeze({
-  pointerEvent: { x: 0, y: 0 },
-});
-
-// The settings should contain all of the "fixed" parts of your programs, like static HTMLElements and paramaters.
-const settings = Object.freeze({
-  /*     sample: {
-        height: 100,
-        width: 100,
-        element: document.querySelector("#sample-output"),
-    }, */
-});
-
-/**
- * Update the state object with the properties included in `newState`.
- * @param {Object} newState An object with the properties to update in the state object.
- */
-function updateState(newState) {
-  state = Object.freeze({ ...state, ...newState });
-}
-
 /**
  * This is where we put the code that transforms and outputs our data.
  * loop() is run every frame, assuming that we keep calling it with `window.requestAnimationFrame`.
@@ -59,7 +37,7 @@ function loop() {
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
-  let audio = new Audio("./assigment_1-template/wind-chimes-sound.mp3");
+  let audio = new Audio("wind-chimes-sound.mp3");
 
   audio.volume = 0;
   audio.autoplay = true;
@@ -68,12 +46,12 @@ function setup() {
     createElement("flame", e, 2.5);
 
     createElement("light", e, 4);
-
-    if (audio.volume < 1) {
-      audio.volume += 0.2;
+    if (audio.paused) {
+      audio.play();
     }
-
-    console.log(audio.volume);
+    if (audio.volume < 1) {
+      audio.volume = Math.floor((audio.volume + 0.2) * 10) / 10;
+    }
   });
 
   // Make the flame+light follow the pointer when it moves
@@ -87,13 +65,13 @@ function setup() {
     removeElement("flame", e.pointerId);
 
     removeElement("light", e.pointerId);
-    if (audio.volume > .1) {
-      audio.volume -= 0.2;
+    if (audio.volume > 0.1) {
+      audio.volume = Math.floor((audio.volume - 0.2) * 10) / 10;
     }
     console.log(audio.volume);
   });
 
-  // Create size and position of flame
+  // Update size and position of element based on pointer event
   function updateSizeAndPos(event, flame, ratio) {
     // set width of flame light
     flame.style.width = `${event.width * ratio}px`;
@@ -136,3 +114,5 @@ function setup() {
 setup(); // Always remember to call setup()!
 
 // Possible improvements : make ratio randomized
+//                         before the first pointerup event it won't start playing the sound effect
+//                              ->store audioState in localStorage and set it playing at refresh
