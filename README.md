@@ -10,6 +10,6 @@ Instructions:
  - start to move it around
  - put multiple fingers on it
  - enjoy the light it brings into the Scandinavian winter!   
- 
+ - NOTE: you have to click/tap on the screen once before starting moving your figers to activate the sound!
  
 [Click here to try it out!](https://shelery.github.io/A1/assigment_1-template/index.html)
