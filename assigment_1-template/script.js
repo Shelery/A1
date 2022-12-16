@@ -37,19 +37,28 @@ function loop() {
  * Setup is run once, at the start of the program. It sets everything up for us!
  */
 function setup() {
+  // Create audio object and set default values
   let audio = new Audio("wind-chimes-sound.mp3");
 
   audio.volume = 0;
   audio.autoplay = true;
+
   // Create a div for flame+light when screen touched
   document.addEventListener("pointerdown", (e) => {
     createElement("flame", e, 2.5);
 
     createElement("light", e, 4);
+    // Define audio behavior
+
+    //    start playing it after refresh
     if (audio.paused) {
       audio.play();
     }
+    // at any touch, increase the volume, unless it is max
     if (audio.volume < 1) {
+      // Round down the volume to 1 decimal
+      //    Why?  +0.2 works as expected until 3rd touch
+      //          when expected output: 0.6 instead 0.6000000X that could lead to unexpected values later
       audio.volume = Math.floor((audio.volume + 0.2) * 10) / 10;
     }
   });
@@ -60,15 +69,16 @@ function setup() {
 
     followPointer("light", e, 4);
   });
+
   // remove the flame+light when finger lifted
   document.addEventListener("pointerup", (e) => {
     removeElement("flame", e.pointerId);
 
     removeElement("light", e.pointerId);
+    // Decrease volume when finger removed unless it is already muted
     if (audio.volume > 0.1) {
       audio.volume = Math.floor((audio.volume - 0.2) * 10) / 10;
     }
-    console.log(audio.volume);
   });
 
   // Update size and position of element based on pointer event
@@ -116,3 +126,4 @@ setup(); // Always remember to call setup()!
 // Possible improvements : make ratio randomized
 //                         before the first pointerup event it won't start playing the sound effect
 //                              ->store audioState in localStorage and set it playing at refresh
+//                        didn't have the device with precise touchscreen that could take in changing values about touched surface
